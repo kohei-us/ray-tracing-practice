@@ -8,8 +8,8 @@ using namespace std;
 color ray_color(const ray& r)
 {
     vec3 unit_direction = unit_vector(r.direction());
-    auto t = 0.5 * (unit_direction.y() + 1.0);
-    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+    auto t = 0.5 * (unit_direction.y() + 1.0); // scale t to [0-1]
+    return (1.0 - t) * color(1.0, 0.5, 0.2) + t * color(0.5, 0.7, 1.0);
 }
 
 int main(int argc, char** argv)
@@ -46,8 +46,8 @@ int main(int argc, char** argv)
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
         for (int i = 0; i < image_width; ++i)
         {
-            auto u = double(i) / (image_width - 1);
-            auto v = double(j) / (image_height - 1);
+            auto u = double(i) / (image_width - 1);  // horizontal increment
+            auto v = double(j) / (image_height - 1); // vertical increment
             ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
             color pixel_color = ray_color(r);
             write_color(std::cout, pixel_color);
