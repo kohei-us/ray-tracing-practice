@@ -1,5 +1,12 @@
 #pragma once
 
+/**
+ * This class stores the origin and the direction of a ray in 3D space:
+ *
+ *   P(t) = A + t dot B
+ *
+ * where A is the origin and B is the direction of a ray.
+ */
 class ray
 {
 public:
