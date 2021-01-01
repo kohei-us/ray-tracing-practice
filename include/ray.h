@@ -1,5 +1,7 @@
 #pragma once
 
+#include "vec3.h"
+
 /**
  * This class stores the origin and the direction of a ray in 3D space:
  *
