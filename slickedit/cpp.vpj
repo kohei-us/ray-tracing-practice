@@ -66,6 +66,7 @@
             <F N="../include/hittable.h"/>
             <F N="../include/hittable_list.h"/>
             <F N="../include/ray.h"/>
+            <F N="../include/rtweekend.h"/>
             <F N="../include/sphere.h"/>
             <F N="../include/vec3.h"/>
         </Folder>
