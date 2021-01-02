@@ -54,6 +54,7 @@
             Name="Source Files"
             Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.c++;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.scala;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.d;*.m;*.mm;*.go;*.groovy;*.gsh"
             GUID="{D5F5066A-0CAC-4462-B701-702B58F0BEF8}">
+            <F N="../hittable_list.cpp"/>
             <F N="../make_ppm.cpp"/>
             <F N="../sphere.cpp"/>
         </Folder>
@@ -63,6 +64,7 @@
             GUID="{9D642B75-62D3-4442-B368-1057E342C8C4}">
             <F N="../include/color.h"/>
             <F N="../include/hittable.h"/>
+            <F N="../include/hittable_list.h"/>
             <F N="../include/ray.h"/>
             <F N="../include/sphere.h"/>
             <F N="../include/vec3.h"/>
