@@ -26,6 +26,13 @@ public:
     vec3(double e0, double e1, double e2) : e{e0, e1, e2}
     { }
 
+    bool near_zero() const
+    {
+        // returns true if the vector is near zero in all dimensions
+        const double s = 1e-8;
+        return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+    }
+
     double x() const { return e[0]; }
     double y() const { return e[1]; }
     double z() const { return e[2]; }
@@ -155,3 +162,7 @@ inline vec3 random_in_hemisphere(const vec3& normal)
         return -in_unit_sphere;
 }
 
+inline vec3 reflect(const vec3& v, const vec3& n)
+{
+    return v - 2 * dot(v, n) * n;
+}

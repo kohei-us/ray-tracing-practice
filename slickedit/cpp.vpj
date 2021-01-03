@@ -57,6 +57,7 @@
             <F N="../camera.cpp"/>
             <F N="../hittable_list.cpp"/>
             <F N="../make_ppm.cpp"/>
+            <F N="../material.cpp"/>
             <F N="../sphere.cpp"/>
         </Folder>
         <Folder
@@ -67,6 +68,7 @@
             <F N="../include/color.h"/>
             <F N="../include/hittable.h"/>
             <F N="../include/hittable_list.h"/>
+            <F N="../include/material.h"/>
             <F N="../include/ray.h"/>
             <F N="../include/rtweekend.h"/>
             <F N="../include/sphere.h"/>
