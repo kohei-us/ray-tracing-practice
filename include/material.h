@@ -48,4 +48,7 @@ public:
 
 public:
     double ir; // index of refraction
+
+private:
+    static double reflectance(double cosine, double ref_idx);
 };
