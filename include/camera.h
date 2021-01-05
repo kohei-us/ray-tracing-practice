@@ -12,7 +12,9 @@ class ray;
 class camera
 {
 public:
-    camera();
+    camera(
+        point3 lookfrom, point3 lookat, vec3 vup,
+        double vfov, double aspect_ratio);
 
     ray get_ray(double u, double v) const;
 
