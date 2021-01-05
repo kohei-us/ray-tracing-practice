@@ -28,9 +28,9 @@ color ray_color(const ray& r, const hittable& world, int depth)
     // Draw background color.
     vec3 unit_direction = unit_vector(r.direction());
     double t = 0.5 * (unit_direction.y() + 1.0); // scale t to [0-1]
-    color green(0.0, 1.0, 0.0);
-    color red(1.0, 0.0, 0.0);
-    return (1.0 - t) * green + t * red;
+    color c1(1.0, 1.0, 1.0);
+    color c2(0.5, 0.7, 1.0);
+    return (1.0 - t) * c1 + t * c2;
 }
 
 int main(int argc, char** argv)
@@ -55,12 +55,17 @@ int main(int argc, char** argv)
     world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),  -0.4, material_left));
     world.add(make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
+    point3 lookfrom(3,3,2);
+    point3 lookat(0,0,-1);
+    vec3 vup(0,1,0);
+
     camera cam(
-        point3(-2, 2, 1), // lookfrom
-        point3(0, 0, -1), // lookat
-        vec3(0, 1, 0), // vup
+        lookfrom, lookat, vup,
         20.0, // field of view
-        aspect_ratio);
+        aspect_ratio,
+        2.0, // aperture
+        (lookfrom - lookat).length()
+    );
 
     // Render
 
