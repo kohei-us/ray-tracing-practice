@@ -142,40 +142,84 @@ std::string run_row_batch(
     return os.str();
 }
 
-int main(int argc, char** argv)
+using interlaced_str_t = std::vector<std::string>;
+
+interlaced_str_t run_rows_interlaced(
+    int init_offset, int interval,
+    const hittable_list& world, const camera& cam, int image_width, int image_height,
+    int samples_per_pixel, int max_depth)
 {
-    const unsigned int n_threads = std::thread::hardware_concurrency();
+    interlaced_str_t ret;
 
-    std::cerr << "number of threads: " << n_threads << std::endl;
+    for (int row = image_height - init_offset - 1; row >= 0; row -= interval)
+    {
+        std::ostringstream os;
 
-    // Image shape
-    const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1200;
-    const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 20;
-    const int max_depth = 50;
+        std::vector<color> pixel_colors = run_row(
+            world, cam, row, image_width, image_height, samples_per_pixel, max_depth);
 
-    std::cerr << "image size: (" << image_width << ", " << image_height << ")" << std::endl;
+        for (const auto& c : pixel_colors)
+            write_color(os, c, samples_per_pixel);
 
-    // World
-    hittable_list world = random_scene();
+        ret.push_back(os.str());
+    }
 
-    point3 lookfrom(13,2,3);
-    point3 lookat(0,0,0);
-    vec3 vup(0,1,0);
-    double dist_to_focus = 10.0;
-    double aperture = 0.1;
-    double field_of_view = 20.0;
+    return ret;
+}
 
-    camera cam(
-        lookfrom, lookat, vup,
-        field_of_view,
-        aspect_ratio,
-        aperture, dist_to_focus
-    );
+void run_interlaced(
+    const unsigned int n_threads,
+    const hittable_list& world, const camera& cam, int image_width, int image_height,
+    int samples_per_pixel, int max_depth)
+{
+    std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
 
-    // Render
+    using future_type = std::future<interlaced_str_t>;
+    std::vector<future_type> futures;
 
+    unsigned int thread_id = 0;
+    for (; thread_id < (n_threads - 1); ++thread_id)
+    {
+        std::cerr << "thread: " << thread_id << std::endl;
+
+        future_type f = std::async(
+            std::launch::async, &run_rows_interlaced, thread_id, n_threads, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+        futures.push_back(std::move(f));
+    }
+
+    std::cerr << "thread: " << thread_id << std::endl;
+    interlaced_str_t last_res = run_rows_interlaced(
+        thread_id, n_threads, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+
+    std::vector<interlaced_str_t> results;
+    for (future_type& f : futures)
+        results.push_back(f.get());
+
+    results.push_back(last_res);
+
+    for (thread_id = 0; thread_id < n_threads; ++thread_id)
+    {
+        const interlaced_str_t& res = results[thread_id];
+        std::cerr << "thread: " << thread_id << "; size: " << res.size() << std::endl;
+    }
+
+    // Combine the interlaced string results and write the final output.
+
+    size_t n_last_scan = image_height - results.back().size() * n_threads;
+
+    for (size_t i = 0; i < results.back().size(); ++i)
+        for (unsigned int thread_id = 0; thread_id < n_threads; ++thread_id)
+            std::cout << results[thread_id][i];
+
+    for (size_t i = 0; i < n_last_scan; ++i)
+        std::cout << results[i].back();
+}
+
+void run_split(
+    const unsigned int n_threads,
+    const hittable_list& world, const camera& cam, int image_width, int image_height,
+    int samples_per_pixel, int max_depth)
+{
     const unsigned int heights_per_thread = image_height / n_threads;
     std::cerr << "image height per thread: " << heights_per_thread << std::endl;
 
@@ -210,6 +254,43 @@ int main(int argc, char** argv)
     std::cout << last_chunk;
 
     std::cerr << "\nDone.\n";
+}
+
+int main(int argc, char** argv)
+{
+    const unsigned int n_threads = std::thread::hardware_concurrency();
+
+    std::cerr << "number of threads: " << n_threads << std::endl;
+
+    // Image shape
+    const auto aspect_ratio = 16.0 / 9.0;
+    const int image_width = 1200;
+    const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int samples_per_pixel = 20;
+    const int max_depth = 50;
+
+    std::cerr << "image size: (" << image_width << ", " << image_height << ")" << std::endl;
+
+    // World
+    hittable_list world = random_scene();
+
+    point3 lookfrom(13,2,3);
+    point3 lookat(0,0,0);
+    vec3 vup(0,1,0);
+    double dist_to_focus = 10.0;
+    double aperture = 0.1;
+    double field_of_view = 20.0;
+
+    camera cam(
+        lookfrom, lookat, vup,
+        field_of_view,
+        aspect_ratio,
+        aperture, dist_to_focus
+    );
+
+    // Render
+//  run_split(n_threads, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+    run_interlaced(n_threads, world, cam, image_width, image_height, samples_per_pixel, max_depth);
 
     return EXIT_SUCCESS;
 }
