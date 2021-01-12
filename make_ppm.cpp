@@ -131,6 +131,7 @@ int main(int argc, char** argv)
     for (int j = image_height - 1; j >= 0; --j)
     {
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+        std::vector<color> pixel_colors;
         for (int i = 0; i < image_width; ++i)
         {
             color pixel_color(0, 0, 0);
@@ -141,8 +142,12 @@ int main(int argc, char** argv)
                 ray r = cam.get_ray(u, v);
                 pixel_color += ray_color(r, world, max_depth);
             }
-            write_color(std::cout, pixel_color, samples_per_pixel);
+
+            pixel_colors.push_back(pixel_color);
         }
+
+        for (const auto& c : pixel_colors)
+            write_color(std::cout, c, samples_per_pixel);
     }
 
     std::cerr << "\nDone.\n";
