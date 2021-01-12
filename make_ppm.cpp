@@ -7,6 +7,9 @@
 #include "material.h"
 
 #include <iostream>
+#include <sstream>
+#include <thread>
+#include <future>
 
 using namespace std;
 
@@ -120,14 +123,39 @@ std::vector<color> run_row(
     return pixel_colors;
 }
 
+std::string run_row_batch(
+    int row_start, int row_end,
+    const hittable_list& world, const camera& cam, int image_width, int image_height,
+    int samples_per_pixel, int max_depth)
+{
+    std::ostringstream os;
+
+    for (int row = row_start; row >= row_end; --row)
+    {
+        std::vector<color> pixel_colors = run_row(
+            world, cam, row, image_width, image_height, samples_per_pixel, max_depth);
+
+        for (const auto& c : pixel_colors)
+            write_color(os, c, samples_per_pixel);
+    }
+
+    return os.str();
+}
+
 int main(int argc, char** argv)
 {
+    const unsigned int n_threads = std::thread::hardware_concurrency();
+
+    std::cerr << "number of threads: " << n_threads << std::endl;
+
     // Image shape
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = 1200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 20;
     const int max_depth = 50;
+
+    std::cerr << "image size: (" << image_width << ", " << image_height << ")" << std::endl;
 
     // World
     hittable_list world = random_scene();
@@ -148,18 +176,38 @@ int main(int argc, char** argv)
 
     // Render
 
+    const unsigned int heights_per_thread = image_height / n_threads;
+    std::cerr << "image height per thread: " << heights_per_thread << std::endl;
+
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
 
-    for (int j = image_height - 1; j >= 0; --j)
+    using future_type = std::future<std::string>;
+    std::vector<future_type> futures;
+
+    int row = image_height - 1;
+    for (unsigned int i = 0; i < (n_threads - 1); ++i)
     {
-        std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+        int row_end = row - heights_per_thread + 1;
+        std::cerr << "rows: " << row << "-" << row_end << " (" << (row - row_end + 1) << ")" << std::endl;
 
-        std::vector<color> pixel_colors = run_row(
-            world, cam, j, image_width, image_height, samples_per_pixel, max_depth);
+        future_type f = std::async(
+            std::launch::async, &run_row_batch, row, row_end, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+        futures.push_back(std::move(f));
 
-        for (const auto& c : pixel_colors)
-            write_color(std::cout, c, samples_per_pixel);
+        row = row_end - 1;
     }
+
+    int row_end = 0;
+    std::cerr << "rows: " << row << "-" << row_end << " (" << (row - row_end + 1) << ")" << std::endl;
+    std::string last_chunk = run_row_batch(row, row_end, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+
+    for (future_type& f : futures)
+    {
+        std::string s = f.get();
+        std::cout << s;
+    }
+
+    std::cout << last_chunk;
 
     std::cerr << "\nDone.\n";
 
