@@ -98,6 +98,28 @@ hittable_list random_scene()
     return world;
 }
 
+std::vector<color> run_row(
+    const hittable_list& world, const camera& cam, int row, int image_width, int image_height,
+    int samples_per_pixel, int max_depth)
+{
+    std::vector<color> pixel_colors;
+    for (int i = 0; i < image_width; ++i)
+    {
+        color pixel_color(0, 0, 0);
+        for (int s = 0; s < samples_per_pixel; ++s)
+        {
+            double u = (i + random_double()) / (image_width - 1);
+            double v = (row + random_double()) / (image_height - 1);
+            ray r = cam.get_ray(u, v);
+            pixel_color += ray_color(r, world, max_depth);
+        }
+
+        pixel_colors.push_back(pixel_color);
+    }
+
+    return pixel_colors;
+}
+
 int main(int argc, char** argv)
 {
     // Image shape
@@ -131,20 +153,9 @@ int main(int argc, char** argv)
     for (int j = image_height - 1; j >= 0; --j)
     {
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-        std::vector<color> pixel_colors;
-        for (int i = 0; i < image_width; ++i)
-        {
-            color pixel_color(0, 0, 0);
-            for (int s = 0; s < samples_per_pixel; ++s)
-            {
-                double u = (i + random_double()) / (image_width - 1);
-                double v = (j + random_double()) / (image_height - 1);
-                ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, world, max_depth);
-            }
 
-            pixel_colors.push_back(pixel_color);
-        }
+        std::vector<color> pixel_colors = run_row(
+            world, cam, j, image_width, image_height, samples_per_pixel, max_depth);
 
         for (const auto& c : pixel_colors)
             write_color(std::cout, c, samples_per_pixel);
