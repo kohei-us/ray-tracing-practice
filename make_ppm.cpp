@@ -147,12 +147,15 @@ using interlaced_str_t = std::vector<std::string>;
 interlaced_str_t run_rows_interlaced(
     int init_offset, int interval,
     const hittable_list& world, const camera& cam, int image_width, int image_height,
-    int samples_per_pixel, int max_depth)
+    int samples_per_pixel, int max_depth, bool progress)
 {
     interlaced_str_t ret;
 
     for (int row = image_height - init_offset - 1; row >= 0; row -= interval)
     {
+        if (progress)
+            std::cerr << "\rscanlines remaining: " << row << std::flush;
+
         std::ostringstream os;
 
         std::vector<color> pixel_colors = run_row(
@@ -183,13 +186,16 @@ void run_interlaced(
         std::cerr << "thread: " << thread_id << std::endl;
 
         future_type f = std::async(
-            std::launch::async, &run_rows_interlaced, thread_id, n_threads, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+            std::launch::async, &run_rows_interlaced, thread_id, n_threads,
+            world, cam, image_width, image_height, samples_per_pixel, max_depth,
+            false);
         futures.push_back(std::move(f));
     }
 
     std::cerr << "thread: " << thread_id << std::endl;
     interlaced_str_t last_res = run_rows_interlaced(
-        thread_id, n_threads, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+        thread_id, n_threads, world, cam, image_width, image_height,
+        samples_per_pixel, max_depth, true);
 
     std::vector<interlaced_str_t> results;
     for (future_type& f : futures)
