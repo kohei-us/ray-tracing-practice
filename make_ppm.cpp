@@ -154,7 +154,7 @@ interlaced_str_t run_rows_interlaced(
     for (int row = image_height - init_offset - 1; row >= 0; row -= interval)
     {
         if (progress)
-            std::cerr << "\rscanlines remaining: " << row << std::flush;
+            std::cerr << "\rscanlines remaining: " << row << "   " << std::flush;
 
         std::ostringstream os;
 
