@@ -203,6 +203,8 @@ void run_interlaced(
 
     results.push_back(last_res);
 
+    std::cerr << std::endl;
+
     for (thread_id = 0; thread_id < n_threads; ++thread_id)
     {
         const interlaced_str_t& res = results[thread_id];
