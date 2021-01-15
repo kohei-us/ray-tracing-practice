@@ -2,6 +2,7 @@
 #include "ray.h"
 #include "rtweekend.h"
 #include "sphere.h"
+#include "moving_sphere.h"
 #include "hittable_list.h"
 #include "camera.h"
 #include "material.h"
@@ -56,10 +57,9 @@ hittable_list random_scene()
                 {
                     // diffuse
                     color albedo = color::random() * color::random();
-                    world.add(
-                        std::make_shared<sphere>(
-                            center, 0.2,
-                            std::make_shared<lambertian>(albedo)));
+                    auto sphere_material = std::make_shared<lambertian>(albedo);
+                    auto center2 = center + vec3(0, random_double(0, 0.5), 0);
+                    world.add(std::make_shared<moving_sphere>(center, center2, 0.0, 1.0, 0.2, sphere_material));
                 }
                 else if (choose_mat < 0.95)
                 {
@@ -272,7 +272,7 @@ int main(int argc, char** argv)
 
     // Image shape
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1200;
+    const int image_width = 800;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 20;
     const int max_depth = 50;
@@ -293,7 +293,7 @@ int main(int argc, char** argv)
         lookfrom, lookat, vup,
         field_of_view,
         aspect_ratio,
-        aperture, dist_to_focus
+        aperture, dist_to_focus, 0.0, 1.0
     );
 
     // Render

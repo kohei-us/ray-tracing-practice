@@ -11,6 +11,7 @@ add_executable(make-ppm
     make_ppm.cpp
     material.cpp
     sphere.cpp
+    moving_sphere.cpp
     hittable_list.cpp
 )
 
