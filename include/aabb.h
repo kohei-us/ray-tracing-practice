@@ -17,3 +17,5 @@ public:
     point3 minimum;
     point3 maximum;
 };
+
+aabb surrounding_box(const aabb& box0, const aabb& box1);

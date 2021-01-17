@@ -10,6 +10,7 @@ public:
     moving_sphere(point3 cen0, point3 cen1, double _time0, double _time1, double r, std::shared_ptr<material> m);
 
     virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override;
+    virtual bool bounding_box(double time0, double time1, aabb& output_box) const override;
 
     point3 center(double time) const;
 

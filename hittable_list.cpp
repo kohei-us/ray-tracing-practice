@@ -1,5 +1,6 @@
 
 #include "hittable_list.h"
+#include "aabb.h"
 
 hittable_list::hittable_list() {}
 
@@ -35,5 +36,30 @@ bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& re
     }
 
     return hit_anything;
+}
+
+bool hittable_list::bounding_box(double time0, double time1, aabb& output_box) const
+{
+    if (objects.empty())
+        return false;
+
+    aabb temp_box;
+
+    auto it = objects.cbegin(), ite = objects.cend();
+
+    if (!(*it)->bounding_box(time0, time1, temp_box))
+        return false;
+
+    output_box = temp_box;
+
+    for (++it; it != ite; ++it)
+    {
+        if (!(*it)->bounding_box(time0, time1, temp_box))
+            return false;
+
+        output_box = surrounding_box(output_box, temp_box);
+    }
+
+    return true;
 }
 
