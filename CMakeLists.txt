@@ -8,6 +8,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 add_executable(make-ppm
     aabb.cpp
+    bvh.cpp
     camera.cpp
     make_ppm.cpp
     material.cpp
