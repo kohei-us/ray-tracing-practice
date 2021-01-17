@@ -183,7 +183,7 @@ void run_interlaced(
     unsigned int thread_id = 0;
     for (; thread_id < (n_threads - 1); ++thread_id)
     {
-        std::cerr << "thread: " << thread_id << std::endl;
+        std::cerr << "thread starting: " << thread_id << std::endl;
 
         future_type f = std::async(
             std::launch::async, &run_rows_interlaced, thread_id, n_threads,
@@ -192,7 +192,7 @@ void run_interlaced(
         futures.push_back(std::move(f));
     }
 
-    std::cerr << "thread: " << thread_id << std::endl;
+    std::cerr << "thread starting: " << thread_id << std::endl;
     interlaced_str_t last_res = run_rows_interlaced(
         thread_id, n_threads, world, cam, image_width, image_height,
         samples_per_pixel, max_depth, true);
@@ -208,7 +208,7 @@ void run_interlaced(
     for (thread_id = 0; thread_id < n_threads; ++thread_id)
     {
         const interlaced_str_t& res = results[thread_id];
-        std::cerr << "thread: " << thread_id << "; size: " << res.size() << std::endl;
+        std::cerr << "thread ending: " << thread_id << "; size: " << res.size() << std::endl;
     }
 
     // Combine the interlaced string results and write the final output.
