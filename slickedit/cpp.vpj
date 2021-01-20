@@ -62,6 +62,7 @@
             <F N="../material.cpp"/>
             <F N="../moving_sphere.cpp"/>
             <F N="../sphere.cpp"/>
+            <F N="../texture.cpp"/>
         </Folder>
         <Folder
             Name="Header Files"
@@ -78,6 +79,7 @@
             <F N="../include/ray.h"/>
             <F N="../include/rtweekend.h"/>
             <F N="../include/sphere.h"/>
+            <F N="../include/texture.h"/>
             <F N="../include/vec3.h"/>
         </Folder>
         <Folder

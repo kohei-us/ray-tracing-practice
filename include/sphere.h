@@ -20,6 +20,9 @@ public:
 
     virtual bool bounding_box(double time0, double time1, aabb& output_box) const override;
 
+private:
+    static void get_sphere_uv(const point3& p, double& u, double& v);
+
 public:
     point3 center;
     double radius;

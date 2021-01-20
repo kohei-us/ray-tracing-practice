@@ -2,6 +2,10 @@
 #include "material.h"
 #include "ray.h"
 #include "hittable.h"
+#include "texture.h"
+
+lambertian::lambertian(const color& a) : albedo(std::make_shared<solid_color>(a)) {}
+lambertian::lambertian(std::shared_ptr<texture> a) : albedo(a) {}
 
 bool lambertian::scatter(
     const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const
@@ -12,7 +16,7 @@ bool lambertian::scatter(
         scatter_direction = rec.normal;
 
     scattered = ray(rec.p, scatter_direction, r_in.time());
-    attenuation = albedo;
+    attenuation = albedo->value(rec.u, rec.v, rec.p);
 
     return true;
 }

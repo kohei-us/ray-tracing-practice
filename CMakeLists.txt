@@ -10,11 +10,12 @@ add_executable(make-ppm
     aabb.cpp
     bvh.cpp
     camera.cpp
+    hittable_list.cpp
     make_ppm.cpp
     material.cpp
-    sphere.cpp
     moving_sphere.cpp
-    hittable_list.cpp
+    sphere.cpp
+    texture.cpp
 )
 
 target_link_libraries(make-ppm Threads::Threads)

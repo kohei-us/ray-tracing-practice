@@ -2,9 +2,11 @@
 
 #include "rtweekend.h"
 #include "vec3.h"
+#include <memory>
 
 struct hit_record;
 class ray;
+class texture;
 
 class material
 {
@@ -16,13 +18,14 @@ public:
 class lambertian : public material
 {
 public:
-    lambertian(const color& a) : albedo(a) {}
+    lambertian(const color& a);
+    lambertian(std::shared_ptr<texture> a);
 
     virtual bool scatter(
         const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override;
 
 public:
-    color albedo;
+    std::shared_ptr<texture> albedo;
 };
 
 class metal : public material
