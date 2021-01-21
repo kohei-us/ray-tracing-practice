@@ -128,6 +128,31 @@ hittable_list two_spheres()
     return objects;
 }
 
+hittable_list two_perlin_spheres()
+{
+    hittable_list objects;
+
+    auto pertext = std::make_shared<noise_texture>();
+
+    objects.add(
+        std::make_shared<sphere>(
+            point3(0, -1000, 0),
+            1000,
+            std::make_shared<lambertian>(pertext)
+        )
+    );
+
+    objects.add(
+        std::make_shared<sphere>(
+            point3(0, 2, 0),
+            2,
+            std::make_shared<lambertian>(pertext)
+        )
+    );
+
+    return objects;
+}
+
 std::vector<color> run_row(
     const hittable_list& world, const camera& cam, int row, int image_width, int image_height,
     int samples_per_pixel, int max_depth)
@@ -274,7 +299,12 @@ int main(int argc, char** argv)
             world = two_spheres();
             lookfrom = point3(13,2,3);
             lookat = point3(0,0,0);
-            aperture = 0.1;
+            vfov = 20.0;
+            break;
+        case 3:
+            world = two_perlin_spheres();
+            lookfrom = point3(13,2,3);
+            lookat = point3(0,0,0);
             vfov = 20.0;
             break;
         default:

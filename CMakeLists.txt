@@ -14,6 +14,7 @@ add_executable(make-ppm
     make_ppm.cpp
     material.cpp
     moving_sphere.cpp
+    perlin.cpp
     sphere.cpp
     texture.cpp
 )

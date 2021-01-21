@@ -28,3 +28,9 @@ color checker_texture::value(double u, double v, const point3& p) const
         return even->value(u, v, p);
 }
 
+noise_texture::noise_texture() {}
+
+color noise_texture::value(double u, double v, const point3 &p) const
+{
+    return color(1, 1, 1) * noise.noise(p);
+}

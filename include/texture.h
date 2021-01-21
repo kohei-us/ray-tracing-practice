@@ -2,6 +2,7 @@
 
 #include "rtweekend.h"
 #include "vec3.h"
+#include "perlin.h"
 
 #include <memory>
 
@@ -36,4 +37,13 @@ public:
 private:
     std::shared_ptr<texture> odd;
     std::shared_ptr<texture> even;
+};
+
+class noise_texture : public texture
+{
+    perlin noise;
+public:
+    noise_texture();
+
+    virtual color value(double u, double v, const point3 &p) const override;
 };

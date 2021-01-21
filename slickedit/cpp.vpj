@@ -61,6 +61,7 @@
             <F N="../make_ppm.cpp"/>
             <F N="../material.cpp"/>
             <F N="../moving_sphere.cpp"/>
+            <F N="../perlin.cpp"/>
             <F N="../sphere.cpp"/>
             <F N="../texture.cpp"/>
         </Folder>
@@ -76,6 +77,7 @@
             <F N="../include/hittable_list.h"/>
             <F N="../include/material.h"/>
             <F N="../include/moving_sphere.h"/>
+            <F N="../include/perlin.h"/>
             <F N="../include/ray.h"/>
             <F N="../include/rtweekend.h"/>
             <F N="../include/sphere.h"/>
