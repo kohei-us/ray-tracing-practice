@@ -17,6 +17,7 @@ private:
 
     static perm_type generate_perm();
     static void permute(perm_type& perm, int n);
+    static double trilinear_interp(double c[2][2][2], double u, double v, double w);
 
     std::array<double, point_count> ranfloat;
     perm_type perm_x;
