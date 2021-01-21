@@ -103,6 +103,31 @@ hittable_list random_scene()
     return world;
 }
 
+hittable_list two_spheres()
+{
+    hittable_list objects;
+
+    auto checker = std::make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
+
+    objects.add(
+        std::make_shared<sphere>(
+            point3(0, -10, 0),
+            10,
+            std::make_shared<lambertian>(checker)
+        )
+    );
+
+    objects.add(
+        std::make_shared<sphere>(
+            point3(0, 10, 0),
+            10,
+            std::make_shared<lambertian>(checker)
+        )
+    );
+
+    return objects;
+}
+
 std::vector<color> run_row(
     const hittable_list& world, const camera& cam, int row, int image_width, int image_height,
     int samples_per_pixel, int max_depth)
@@ -208,8 +233,14 @@ void run_interlaced(
 
 int main(int argc, char** argv)
 {
+    int scenario = 1;
+
+    if (argc > 1)
+        scenario = std::strtol(argv[1], nullptr, 10);
+
     const unsigned int n_threads = std::thread::hardware_concurrency();
 
+    std::cerr << "scenario: " << scenario << std::endl;
     std::cerr << "number of threads: " << n_threads << std::endl;
 
     // Image shape
@@ -222,18 +253,43 @@ int main(int argc, char** argv)
     std::cerr << "image size: (" << image_width << ", " << image_height << ")" << std::endl;
 
     // World
-    hittable_list world = random_scene();
 
-    point3 lookfrom(13,2,3);
-    point3 lookat(0,0,0);
+    hittable_list world;
+    point3 lookfrom;
+    point3 lookat;
+
+    double vfov = 20.0;
+    double aperture = 0.0;
+
+    switch (scenario)
+    {
+        case 1:
+            world = random_scene();
+            lookfrom = point3(13,2,3);
+            lookat = point3(0,0,0);
+            aperture = 0.1;
+            vfov = 20.0;
+            break;
+        case 2:
+            world = two_spheres();
+            lookfrom = point3(13,2,3);
+            lookat = point3(0,0,0);
+            aperture = 0.1;
+            vfov = 20.0;
+            break;
+        default:
+            std::cerr << "invalid scenario index!" << std::endl;
+            return EXIT_FAILURE;
+    }
+
+    // Camera
+
     vec3 vup(0,1,0);
     double dist_to_focus = 10.0;
-    double aperture = 0.1;
-    double field_of_view = 20.0;
 
     camera cam(
         lookfrom, lookat, vup,
-        field_of_view,
+        vfov,
         aspect_ratio,
         aperture, dist_to_focus, 0.0, 1.0
     );
