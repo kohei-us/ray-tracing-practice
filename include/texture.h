@@ -42,8 +42,10 @@ private:
 class noise_texture : public texture
 {
     perlin noise;
+    double scale;
 public:
     noise_texture();
+    noise_texture(double sc);
 
     virtual color value(double u, double v, const point3 &p) const override;
 };

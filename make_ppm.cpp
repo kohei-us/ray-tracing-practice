@@ -132,7 +132,7 @@ hittable_list two_perlin_spheres()
 {
     hittable_list objects;
 
-    auto pertext = std::make_shared<noise_texture>();
+    auto pertext = std::make_shared<noise_texture>(4.0);
 
     objects.add(
         std::make_shared<sphere>(
