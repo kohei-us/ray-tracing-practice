@@ -41,6 +41,22 @@ double perlin::noise(const point3& p) const
     return perlin_interp(c, u, v, w);
 }
 
+double perlin::turb(const point3& p, int depth) const
+{
+    double accum = 0.0;
+    point3 temp_p = p;
+    double weight = 1.0;
+
+    for (int i = 0; i < depth; ++i)
+    {
+        accum += weight * noise(temp_p);
+        weight *= 0.5;
+        temp_p *= 2;
+    }
+
+    return fabs(accum);
+}
+
 std::array<int, perlin::point_count> perlin::generate_perm()
 {
     perm_type ret;

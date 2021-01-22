@@ -11,6 +11,8 @@ public:
 
     double noise(const point3& p) const;
 
+    double turb(const point3& p, int depth=7) const;
+
 private:
     static constexpr int point_count = 256;
     using perm_type = std::array<int, point_count>;
