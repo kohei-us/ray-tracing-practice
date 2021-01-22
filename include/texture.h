@@ -5,6 +5,7 @@
 #include "perlin.h"
 
 #include <memory>
+#include <vector>
 
 class texture
 {
@@ -46,6 +47,22 @@ class noise_texture : public texture
 public:
     noise_texture();
     noise_texture(double sc);
+
+    virtual color value(double u, double v, const point3 &p) const override;
+};
+
+class image_texture : public texture
+{
+    static constexpr int bytes_per_pixel = 3;
+
+    std::vector<unsigned char> data;
+    int width;
+    int height;
+    int bytes_per_scanline;
+
+public:
+    image_texture();
+    image_texture(const char* filepath);
 
     virtual color value(double u, double v, const point3 &p) const override;
 };
