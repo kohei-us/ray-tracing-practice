@@ -15,20 +15,23 @@
 
 using namespace std;
 
-color ray_color(const ray& r, const hittable& world, int depth)
+color ray_color(const ray& r, const color& background, const hittable& world, int depth)
 {
     if (depth <= 0)
         return color(0, 0, 0);
 
     hit_record rec;
-    if (world.hit(r, 0.001, infinity, rec))
-    {
-        ray scattered;
-        color attenuation;
-        if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-            return attenuation * ray_color(scattered, world, depth-1);
-        return color(0, 0, 0);
-    }
+    if (!world.hit(r, 0.001, infinity, rec))
+        return background;
+
+    ray scattered;
+    color attenuation;
+    color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+
+    if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+        return emitted;
+
+    return emitted + attenuation * ray_color(scattered, background, world, depth-1);
 
     // Draw background color.
     vec3 unit_direction = unit_vector(r.direction());
@@ -163,8 +166,8 @@ hittable_list earth()
 }
 
 std::vector<color> run_row(
-    const hittable_list& world, const camera& cam, int row, int image_width, int image_height,
-    int samples_per_pixel, int max_depth)
+    const hittable_list& world, const color& background, const camera& cam,
+    int row, int image_width, int image_height, int samples_per_pixel, int max_depth)
 {
     std::vector<color> pixel_colors;
     for (int i = 0; i < image_width; ++i)
@@ -175,7 +178,7 @@ std::vector<color> run_row(
             double u = (i + random_double()) / (image_width - 1);
             double v = (row + random_double()) / (image_height - 1);
             ray r = cam.get_ray(u, v);
-            pixel_color += ray_color(r, world, max_depth);
+            pixel_color += ray_color(r, background, world, max_depth);
         }
 
         pixel_colors.push_back(pixel_color);
@@ -188,8 +191,9 @@ using interlaced_str_t = std::vector<std::string>;
 
 interlaced_str_t run_rows_interlaced(
     int init_offset, int interval,
-    const hittable_list& world, const camera& cam, int image_width, int image_height,
-    int samples_per_pixel, int max_depth, bool progress)
+    const hittable_list& world, const color& background, const camera& cam,
+    int image_width, int image_height, int samples_per_pixel, int max_depth,
+    bool progress)
 {
     interlaced_str_t ret;
 
@@ -201,7 +205,7 @@ interlaced_str_t run_rows_interlaced(
         std::ostringstream os;
 
         std::vector<color> pixel_colors = run_row(
-            world, cam, row, image_width, image_height, samples_per_pixel, max_depth);
+            world, background, cam, row, image_width, image_height, samples_per_pixel, max_depth);
 
         for (const auto& c : pixel_colors)
             write_color(os, c, samples_per_pixel);
@@ -214,8 +218,8 @@ interlaced_str_t run_rows_interlaced(
 
 void run_interlaced(
     const unsigned int n_threads,
-    const hittable_list& world, const camera& cam, int image_width, int image_height,
-    int samples_per_pixel, int max_depth)
+    const hittable_list& world, const color& background, const camera& cam,
+    int image_width, int image_height, int samples_per_pixel, int max_depth)
 {
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
 
@@ -229,14 +233,14 @@ void run_interlaced(
 
         future_type f = std::async(
             std::launch::async, &run_rows_interlaced, thread_id, n_threads,
-            world, cam, image_width, image_height, samples_per_pixel, max_depth,
+            world, background, cam, image_width, image_height, samples_per_pixel, max_depth,
             false);
         futures.push_back(std::move(f));
     }
 
     std::cerr << "thread starting: " << thread_id << std::endl;
     interlaced_str_t last_res = run_rows_interlaced(
-        thread_id, n_threads, world, cam, image_width, image_height,
+        thread_id, n_threads, world, background, cam, image_width, image_height,
         samples_per_pixel, max_depth, true);
 
     std::vector<interlaced_str_t> results;
@@ -294,11 +298,13 @@ int main(int argc, char** argv)
 
     double vfov = 20.0;
     double aperture = 0.0;
+    color background(0, 0, 0);
 
     switch (scenario)
     {
         case 1:
             world = random_scene();
+            background = color(0.7, 0.8, 1.0);
             lookfrom = point3(13,2,3);
             lookat = point3(0,0,0);
             aperture = 0.1;
@@ -306,21 +312,27 @@ int main(int argc, char** argv)
             break;
         case 2:
             world = two_spheres();
+            background = color(0.7, 0.8, 1.0);
             lookfrom = point3(13,2,3);
             lookat = point3(0,0,0);
             vfov = 20.0;
             break;
         case 3:
             world = two_perlin_spheres();
+            background = color(0.7, 0.8, 1.0);
             lookfrom = point3(13,2,3);
             lookat = point3(0,0,0);
             vfov = 20.0;
             break;
         case 4:
             world = earth();
+            background = color(0.7, 0.8, 1.0);
             lookfrom = point3(13,2,3);
             lookat = point3(0,0,0);
             vfov = 20.0;
+            break;
+        case 5:
+            background = color(0.0, 0.0, 0.0);
             break;
         default:
             std::cerr << "invalid scenario index!" << std::endl;
@@ -340,7 +352,7 @@ int main(int argc, char** argv)
     );
 
     // Render
-    run_interlaced(n_threads, world, cam, image_width, image_height, samples_per_pixel, max_depth);
+    run_interlaced(n_threads, world, background, cam, image_width, image_height, samples_per_pixel, max_depth);
 
     return EXIT_SUCCESS;
 }

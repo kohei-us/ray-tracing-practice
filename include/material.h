@@ -13,6 +13,8 @@ class material
 public:
     virtual bool scatter(
         const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const = 0;
+
+    virtual color emitted(double u, double v, const point3& p) const;
 };
 
 class lambertian : public material
@@ -54,4 +56,17 @@ public:
 
 private:
     static double reflectance(double cosine, double ref_idx);
+};
+
+class diffuse_light : public material
+{
+public:
+    diffuse_light(const std::shared_ptr<texture>& a);
+    diffuse_light(const color& c);
+
+    virtual bool scatter(
+        const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const override;
+
+public:
+    std::shared_ptr<texture> emit;
 };

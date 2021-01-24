@@ -4,6 +4,11 @@
 #include "hittable.h"
 #include "texture.h"
 
+color material::emitted(double u, double v, const point3& p) const
+{
+    return color(0, 0, 0);
+}
+
 lambertian::lambertian(const color& a) : albedo(std::make_shared<solid_color>(a)) {}
 lambertian::lambertian(std::shared_ptr<texture> a) : albedo(a) {}
 
@@ -59,4 +64,13 @@ double dielectric::reflectance(double cosine, double ref_idx)
     auto r0 = (1 - ref_idx)/(1 + ref_idx);
     r0 = r0 * r0;
     return r0 +(1 - r0)* pow((1 - cosine), 5);
+}
+
+diffuse_light::diffuse_light(const std::shared_ptr<texture>& a) : emit(a) {}
+
+diffuse_light::diffuse_light(const color& c) : emit(std::make_shared<solid_color>(c)) {}
+
+bool diffuse_light::scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const
+{
+    return false;
 }
