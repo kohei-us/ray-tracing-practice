@@ -55,6 +55,7 @@
             Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.c++;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.scala;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.d;*.m;*.mm;*.go;*.groovy;*.gsh"
             GUID="{D5F5066A-0CAC-4462-B701-702B58F0BEF8}">
             <F N="../aabb.cpp"/>
+            <F N="../aarect.cpp"/>
             <F N="../bvh.cpp"/>
             <F N="../camera.cpp"/>
             <F N="../hittable_list.cpp"/>
@@ -70,6 +71,7 @@
             Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.h++;*.inc;*.sh;*.cpy;*.if"
             GUID="{9D642B75-62D3-4442-B368-1057E342C8C4}">
             <F N="../include/aabb.h"/>
+            <F N="../include/aarect.h"/>
             <F N="../include/bvh.h"/>
             <F N="../include/camera.h"/>
             <F N="../include/color.h"/>
