@@ -67,6 +67,8 @@ public:
     virtual bool scatter(
         const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const override;
 
+    virtual color emitted(double u, double v, const point3& p) const override;
+
 public:
     std::shared_ptr<texture> emit;
 };
