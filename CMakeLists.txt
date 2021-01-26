@@ -16,6 +16,7 @@ include_directories(
 add_executable(make-ppm
     aabb.cpp
     aarect.cpp
+    box.cpp
     bvh.cpp
     camera.cpp
     hittable_list.cpp
