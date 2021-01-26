@@ -180,6 +180,25 @@ hittable_list simple_light()
     return objects;
 }
 
+hittable_list cornell_box()
+{
+    hittable_list objects;
+
+    auto red   = std::make_shared<lambertian>(color(.65, .05, .05));
+    auto white = std::make_shared<lambertian>(color(.73, .73, .73));
+    auto green = std::make_shared<lambertian>(color(.12, .45, .15));
+    auto light = std::make_shared<diffuse_light>(color(15, 15, 15));
+
+    objects.add(std::make_shared<yz_rect>(0, 555, 0, 555, 555, green));
+    objects.add(std::make_shared<yz_rect>(0, 555, 0, 555, 0, red));
+    objects.add(std::make_shared<xz_rect>(213, 343, 227, 332, 554, light));
+    objects.add(std::make_shared<xz_rect>(0, 555, 0, 555, 0, white));
+    objects.add(std::make_shared<xz_rect>(0, 555, 0, 555, 555, white));
+    objects.add(std::make_shared<xy_rect>(0, 555, 0, 555, 555, white));
+
+    return objects;
+}
+
 std::vector<color> run_row(
     const hittable_list& world, const color& background, const camera& cam,
     int row, int image_width, int image_height, int samples_per_pixel, int max_depth)
@@ -297,13 +316,10 @@ int main(int argc, char** argv)
     std::cerr << "number of threads: " << n_threads << std::endl;
 
     // Image shape
-    const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 800;
-    const int image_height = static_cast<int>(image_width / aspect_ratio);
+    double aspect_ratio = 16.0 / 9.0;
+    int image_width = 800;
     int samples_per_pixel = 20;
     int max_depth = 50;
-
-    std::cerr << "image size: (" << image_width << ", " << image_height << ")" << std::endl;
 
     // World
 
@@ -354,10 +370,22 @@ int main(int argc, char** argv)
             lookat = point3(0, 2, 0);
             vfov = 20.0;
             break;
+        case 6:
+            world = cornell_box();
+            aspect_ratio = 1.0;
+            image_width = 600;
+            samples_per_pixel = 200;
+            background = color(0, 0, 0);
+            lookfrom = point3(278, 278, -800);
+            lookat = point3(278, 278, 0);
+            vfov = 40.0;
+            break;
         default:
             std::cerr << "invalid scenario index!" << std::endl;
             return EXIT_FAILURE;
     }
+
+    int image_height = static_cast<int>(image_width / aspect_ratio);
 
     // Camera
 
@@ -370,6 +398,8 @@ int main(int argc, char** argv)
         aspect_ratio,
         aperture, dist_to_focus, 0.0, 1.0
     );
+
+    std::cerr << "image size: (" << image_width << ", " << image_height << ")" << std::endl;
 
     // Render
     run_interlaced(n_threads, world, background, cam, image_width, image_height, samples_per_pixel, max_depth);
