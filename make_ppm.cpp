@@ -34,13 +34,6 @@ color ray_color(const ray& r, const color& background, const hittable& world, in
         return emitted;
 
     return emitted + attenuation * ray_color(scattered, background, world, depth-1);
-
-    // Draw background color.
-    vec3 unit_direction = unit_vector(r.direction());
-    double t = 0.5 * (unit_direction.y() + 1.0); // scale t to [0-1]
-    color c1(1.0, 1.0, 1.0);
-    color c2(0.5, 0.7, 1.0);
-    return (1.0 - t) * c1 + t * c2;
 }
 
 hittable_list random_scene()
