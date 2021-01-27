@@ -12,7 +12,7 @@ public:
     point3 min() const;
     point3 max() const;
 
-    bool hit (const ray& r, double t_min, double t_max) const;
+    bool hit(const ray& r, double t_min, double t_max) const;
 
     point3 minimum;
     point3 maximum;

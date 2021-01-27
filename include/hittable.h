@@ -40,10 +40,25 @@ class translate : public hittable
 public:
     translate(const std::shared_ptr<hittable>& _ptr, const vec3& _offset);
 
-    bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override;
-    bool bounding_box(double time0, double time1, aabb &output_box) const override;
+    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override;
+    virtual bool bounding_box(double time0, double time1, aabb &output_box) const override;
 
 public:
     std::shared_ptr<hittable> ptr;
     vec3 offset;
+};
+
+class rotate_y : public hittable
+{
+public:
+    rotate_y(const std::shared_ptr<hittable>& _ptr, double angle);
+
+    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override;
+    virtual bool bounding_box(double time0, double time1, aabb &output_box) const override;
+
+public:
+    std::shared_ptr<hittable> ptr;
+    std::shared_ptr<aabb> box;
+    double sin_theta;
+    double cos_theta;
 };
