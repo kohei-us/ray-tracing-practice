@@ -59,6 +59,7 @@
             <F N="../box.cpp"/>
             <F N="../bvh.cpp"/>
             <F N="../camera.cpp"/>
+            <F N="../hittable.cpp"/>
             <F N="../hittable_list.cpp"/>
             <F N="../make_ppm.cpp"/>
             <F N="../material.cpp"/>

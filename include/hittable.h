@@ -34,3 +34,16 @@ public:
     virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
     virtual bool bounding_box(double time0, double time1, aabb& output_box) const = 0;
 };
+
+class translate : public hittable
+{
+public:
+    translate(const std::shared_ptr<hittable>& _ptr, const vec3& _offset);
+
+    bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override;
+    bool bounding_box(double time0, double time1, aabb &output_box) const override;
+
+public:
+    std::shared_ptr<hittable> ptr;
+    vec3 offset;
+};
