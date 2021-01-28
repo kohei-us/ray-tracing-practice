@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "aarect.h"
 #include "box.h"
+#include "constant_medium.h"
 
 #include <iostream>
 #include <sstream>
@@ -203,6 +204,35 @@ hittable_list cornell_box()
     return objects;
 }
 
+hittable_list cornell_smoke()
+{
+    hittable_list objects;
+
+    auto red   = std::make_shared<lambertian>(color(.65, .05, .05));
+    auto white = std::make_shared<lambertian>(color(.73, .73, .73));
+    auto green = std::make_shared<lambertian>(color(.12, .45, .15));
+    auto light = std::make_shared<diffuse_light>(color(7, 7, 7));
+
+    objects.add(std::make_shared<yz_rect>(0, 555, 0, 555, 555, green));
+    objects.add(std::make_shared<yz_rect>(0, 555, 0, 555, 0, red));
+    objects.add(std::make_shared<xz_rect>(113, 443, 127, 432, 554, light));
+    objects.add(std::make_shared<xz_rect>(0, 555, 0, 555, 0, white));
+    objects.add(std::make_shared<xz_rect>(0, 555, 0, 555, 555, white));
+    objects.add(std::make_shared<xy_rect>(0, 555, 0, 555, 555, white));
+
+    std::shared_ptr<hittable> box1 = std::make_shared<box>(point3(0, 0, 0), point3(165, 330, 165), white);
+    box1 = std::make_shared<rotate_y>(box1, 15);
+    box1 = std::make_shared<translate>(box1, vec3(265, 0, 295));
+    objects.add(std::make_shared<constant_medium>(box1, 0.01, color(0, 0, 0)));
+
+    std::shared_ptr<hittable> box2 = std::make_shared<box>(point3(0, 0, 0), point3(165, 165, 165), white);
+    box2 = std::make_shared<rotate_y>(box2, -18);
+    box2 = std::make_shared<translate>(box2, vec3(130, 0, 65));
+    objects.add(std::make_shared<constant_medium>(box2, 0.01, color(1, 1, 1)));
+
+    return objects;
+}
+
 std::vector<color> run_row(
     const hittable_list& world, const color& background, const camera& cam,
     int row, int image_width, int image_height, int samples_per_pixel, int max_depth)
@@ -380,6 +410,15 @@ int main(int argc, char** argv)
             image_width = 600;
             samples_per_pixel = 200;
             background = color(0, 0, 0);
+            lookfrom = point3(278, 278, -800);
+            lookat = point3(278, 278, 0);
+            vfov = 40.0;
+            break;
+        case 7:
+            world = cornell_smoke();
+            aspect_ratio = 1.0;
+            image_width = 600;
+            samples_per_pixel = 200;
             lookfrom = point3(278, 278, -800);
             lookat = point3(278, 278, 0);
             vfov = 40.0;

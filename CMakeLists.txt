@@ -19,6 +19,7 @@ add_executable(make-ppm
     box.cpp
     bvh.cpp
     camera.cpp
+    constant_medium.cpp
     hittable.cpp
     hittable_list.cpp
     make_ppm.cpp

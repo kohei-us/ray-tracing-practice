@@ -59,6 +59,7 @@
             <F N="../box.cpp"/>
             <F N="../bvh.cpp"/>
             <F N="../camera.cpp"/>
+            <F N="../constant_medium.cpp"/>
             <F N="../hittable.cpp"/>
             <F N="../hittable_list.cpp"/>
             <F N="../make_ppm.cpp"/>
@@ -78,6 +79,7 @@
             <F N="../include/bvh.h"/>
             <F N="../include/camera.h"/>
             <F N="../include/color.h"/>
+            <F N="../include/constant_medium.h"/>
             <F N="../include/hittable.h"/>
             <F N="../include/hittable_list.h"/>
             <F N="../include/material.h"/>

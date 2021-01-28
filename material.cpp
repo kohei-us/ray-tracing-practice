@@ -80,3 +80,13 @@ color diffuse_light::emitted(double u, double v, const point3& p) const
     return emit->value(u, v, p);
 }
 
+isotropic::isotropic(const color& c) : albedo(std::make_shared<solid_color>(c)) {}
+isotropic::isotropic(const std::shared_ptr<texture>& a) : albedo(a) {}
+
+bool isotropic::scatter(const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const
+{
+    scattered = ray(rec.p, random_in_unit_sphere(), r_in.time());
+    attenuation = albedo->value(rec.u, rec.v, rec.p);
+    return true;
+}
+
