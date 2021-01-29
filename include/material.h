@@ -43,6 +43,7 @@ public:
     double fuzz;
 };
 
+/** Glassy material with refraction. */
 class dielectric : public material
 {
 public:
