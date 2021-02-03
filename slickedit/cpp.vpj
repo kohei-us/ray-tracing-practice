@@ -66,6 +66,7 @@
             <F N="../material.cpp"/>
             <F N="../moving_sphere.cpp"/>
             <F N="../perlin.cpp"/>
+            <F N="../pi.cpp"/>
             <F N="../sphere.cpp"/>
             <F N="../texture.cpp"/>
         </Folder>

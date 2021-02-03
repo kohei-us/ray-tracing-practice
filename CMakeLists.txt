@@ -30,4 +30,6 @@ add_executable(make-ppm
     texture.cpp
 )
 
+add_executable(pi pi.cpp)
+
 target_link_libraries(make-ppm Threads::Threads)
