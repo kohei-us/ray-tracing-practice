@@ -32,4 +32,6 @@ add_executable(make-ppm
 
 add_executable(pi pi.cpp)
 
+add_executable(integrate-x-square integrate_x_square.cpp)
+
 target_link_libraries(make-ppm Threads::Threads)
