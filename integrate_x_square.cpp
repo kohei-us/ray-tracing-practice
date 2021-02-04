@@ -7,16 +7,16 @@ using namespace std;
 
 inline double pdf(double x)
 {
-    return 0.5 * x;
+    return 3.0*x*x/8.0;
 }
 
 int main(int argc, char **argv)
 {
-    int N = 1000000;
+    int N = 1;
     double sum = 0.0;
     for (int i = 0; i < N; ++i)
     {
-        double x = sqrt(random_double(0, 4));
+        double x = 8*pow(random_double(), 1./3.);
         sum += x * x / pdf(x);
     }
 
