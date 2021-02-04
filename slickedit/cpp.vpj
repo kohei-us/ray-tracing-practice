@@ -62,6 +62,7 @@
             <F N="../constant_medium.cpp"/>
             <F N="../hittable.cpp"/>
             <F N="../hittable_list.cpp"/>
+            <F N="../integrate_x_square.cpp"/>
             <F N="../make_ppm.cpp"/>
             <F N="../material.cpp"/>
             <F N="../moving_sphere.cpp"/>
